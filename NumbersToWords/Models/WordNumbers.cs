@@ -5,10 +5,10 @@ using System;
 namespace NumbersToWords.Models
 {
   public class WordNumbers
-  { 
-    public static string ConvertToWords(int num)
+  {
+    public static string ConvertToWords(long num)
     {
-      Dictionary<int,string> numToWord = new Dictionary<int,string>()
+      Dictionary<int, string> numToWord = new Dictionary<int, string>()
       {
         {0,""},
         {1,"one"},
@@ -32,7 +32,7 @@ namespace NumbersToWords.Models
         {19,"nineteen"}
       };
 
-      Dictionary<int,string> tenToWord = new Dictionary<int,string>()
+      Dictionary<int, string> tenToWord = new Dictionary<int, string>()
       {
         {0,""},
         {20,"twenty"},
@@ -45,80 +45,104 @@ namespace NumbersToWords.Models
         {90,"ninety"}
       };
 
-      // if num is greater than 19, split into tens and ones
-      // 21 -> 20, 1
       string stringNum = num.ToString();
+      string result = "";
 
       if (num < 20)
-      { 
-        return numToWord[num];
+      {
+        return numToWord[(int)num];
       }
       else if (num > 19)
       {
-        // 999, 999, 999, 999
-        string result = "";
-        int numberOfSplits = stringNum.Length / 3 + 1;
-        string[] thousands = new string[4] {"trillion", "billion", "million", "thousand"};
-        // 1, 119 -> 2 splits
+        // 11 -> 1 split
+        // 111 -> 1 split
+        // 1, 111 -> 2 splits
         // 1, 111, 111 -> 3 splits
         // 1, 111, 111, 111 -> 4 splits
-        for (int i = 0; i < numberOfSplits; i++) 
+        // 1, 111, 111, 111, 111 -> 5 splits
+        int numberOfSplits = stringNum.Length / 3;
+        numberOfSplits = (stringNum.Length % 3 > 0) ? numberOfSplits + 1 : numberOfSplits;
+
+        // copy of num just in case
+        long numC = num;
+
+        for (int i = 0; i < numberOfSplits; i++)
         {
-          int newNum = num / (int) Math.Pow(Convert.ToDouble(1000), Convert.ToDouble(numberOfSplits - 1));
+          // grab one "split" from the number
+          // e.g. at i=0 and numC=12,345,678 then newNum=12
+          long newNum = numC / (long)System.Numerics.BigInteger.Pow((long)1000, numberOfSplits - (i + 1));
           string newStringNum = newNum.ToString();
-          result += ConvertUpToHundreds(newNum, newStringNum, tenToWord, numToWord);
-          if (num > 999 && i == 0)
+
+          // newNum cannot exceed 999
+          result += ConvertUpToHundreds((int)newNum, newStringNum, tenToWord, numToWord);
+
+          if (numC > 999)
           {
-            result += " thousand ";
+            if (numC > 999999999999)
+            {
+              result += " trillion ";
+            }
+            else if (numC > 999999999)
+            {
+              result += " billion ";
+            }
+            else if (numC > 999999)
+            {
+              result += " million ";
+            }
+            else if (numC > 999)
+            {
+              result += " thousand ";
+            }
+            // remove the split that was just parsed into words
+            // e.g. at i=0 and numC=12,345,678 then now numC=345,678
+            numC = long.Parse(numC.ToString().Substring(newStringNum.Length));
           }
         }
-
-        return result;
       }
-      return "zero";
+      return result.TrimEnd(' '); ;
     }
 
-    private static string ConvertUpToHundreds(int num, string stringNum, Dictionary<int,string> tenToWord, Dictionary<int,string> numToWord)
+    private static string ConvertUpToHundreds(int num, string stringNum, Dictionary<int, string> tenToWord, Dictionary<int, string> numToWord)
     {
-        string[] numArray = new string[stringNum.Length];
-        string result = "";
-        for (int i = 0; i < stringNum.Length; i++)
-        {
-          numArray[i] = stringNum[i].ToString();
-        }
-        if (num > 120)
-        {
-          result = numToWord[int.Parse(numArray[0])] + " hundred " + tenToWord[int.Parse(numArray[1] + "0")] + " " + numToWord[int.Parse(numArray[2])];
-        } 
-        else if (num > 99)
-        {
-          // covering 100 to 119
-          // 119
-          // numToWord(1) + "hundred" + tenToWord(10) + numToWord(9)
-          // one hundred error nine
+      // string[] numArray = new string[stringNum.Length];
+      string result = "";
+      // for (int i = 0; i < stringNum.Length; i++)
+      // {
+      //   numArray[i] = stringNum[i].ToString();
+      // }
+      if (num > 99)
+      {
+        // result = numToWord[int.Parse(numArray[0])] + " hundred " + tenToWord[int.Parse(numArray[1] + "0")] + " " + numToWord[int.Parse(numArray[2])];
+        int hundreds = num / 100;
+        result += numToWord[hundreds] + " hundred ";
+        num = num - (hundreds * 100);
+      }
 
-          // to cover teens
-          // 119 
-          // 109
-          // numToWord(1) + hundred + numToWord(tens + 9)
-          // numToWord(19) = nineteen
-          string tens = "";
-          if (stringNum[1] == '1')
-          {
-            tens = "1";
-          }
-          result = 
-            numToWord[int.Parse(numArray[0])] +
-            " hundred " + 
-            numToWord
-            [int.Parse(tens + numArray[2])];
-        }
-        else 
-        {
-          result = tenToWord[int.Parse(numArray[0] + "0")] + " " + numToWord[int.Parse(numArray[1])];
-        }
+      // if (num > 99)
+      // {
+      //   string tens = "";
+      //   if (stringNum[1] == '1')
+      //   {
+      //     tens = "1";
+      //   }
+      //   result =
+      //     numToWord[int.Parse(numArray[0])] +
+      //     " hundred " +
+      //     numToWord[int.Parse(tens + numArray[2])];
+      // }
+      if (num > 19)
+      {
+        int tens = num / 10 * 10;
+        num = num - tens;
+        result += tenToWord[tens] + " " + numToWord[num];
+      }
+      else
+      {
+        result += numToWord[num];
+      }
 
-        return result.TrimEnd(' ');
+      return result.TrimEnd(' ');
     }
   }
 }

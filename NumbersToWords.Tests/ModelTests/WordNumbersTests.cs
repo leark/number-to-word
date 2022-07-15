@@ -67,9 +67,45 @@ namespace NumbersToWords.Tests
     }
 
     [TestMethod]
+    public void ConvertToWords_ReturnWordFor219_TwoHundredNineteen()
+    {
+      Assert.AreEqual("two hundred nineteen", WordNumbers.ConvertToWords(219));
+    }
+
+    [TestMethod]
     public void ConvertToWords_ReturnWordFor1119_OneThousandOneHundredNineteen()
     {
       Assert.AreEqual("one thousand one hundred nineteen", WordNumbers.ConvertToWords(1119));
+    }
+
+    [TestMethod]
+    public void ConvertToWords_ReturnWordFor900001_NineHundredThousandOne()
+    {
+      Assert.AreEqual("nine hundred thousand one", WordNumbers.ConvertToWords(900001));
+    }
+
+    [TestMethod]
+    public void ConvertToWords_ReturnWordFor900009001_NineHundredMilionNineThousandOne()
+    {
+      Assert.AreEqual("nine hundred million nine thousand one", WordNumbers.ConvertToWords(900009001));
+    }
+
+    [TestMethod]
+    public void ConvertToWords_ReturnWordFor800900009001_EightHundredBillionNineHundredMilionNineThousandOne()
+    {
+      Assert.AreEqual("eight hundred billion nine hundred million nine thousand one", WordNumbers.ConvertToWords(800900009001));
+    }
+
+    [TestMethod]
+    public void ConvertToWords_ReturnWordFor1000000000000_OneTrillion()
+    {
+      Assert.AreEqual("one trillion", WordNumbers.ConvertToWords(1000000000000));
+    }
+
+    [TestMethod]
+    public void ConvertToWords_ReturnWordFor10800900009001_TenTrillionEightHundredBillionNineHundredMilionNineThousandOne()
+    {
+      Assert.AreEqual("ten trillion eight hundred billion nine hundred million nine thousand one", WordNumbers.ConvertToWords(10800900009001));
     }
   }
 }
