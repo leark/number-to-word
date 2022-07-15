@@ -9,17 +9,18 @@ namespace NumbersToWords.Models
     // returns word version of the number num
     // up to 999999999999999999 and down to -999999999999999999
     // which is nine hundred ninety nine quadrillion...
-    public static string ConvertToWords(long num)
+    public static string ConvertToWords(string numString)
     {
-      if (num > 999999999999999999)
-      {
-        return "Number is too large";
-      }
-      else if (num < -999999999999999999)
+      if (numString[0] == '\u002d' && numString.Length > 19)
       {
         return "Number is too small";
       }
+      else if (numString[0] != '\u002d' && numString.Length > 18)
+      {
+        return "Number is too large";
+      }
 
+      long num = (long)System.Numerics.BigInteger.Parse(numString);
       bool isNegative = false;
       if (num == 0)
       {
