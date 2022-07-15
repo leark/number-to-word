@@ -6,8 +6,31 @@ namespace NumbersToWords.Models
 {
   public class WordNumbers
   {
+    // returns word version of the number num
+    // up to 999999999999999999 and down to -999999999999999999
+    // which is nine hundred ninety nine quadrillion...
     public static string ConvertToWords(long num)
     {
+      if (num > 999999999999999999)
+      {
+        return "Number is too large";
+      }
+      else if (num < -999999999999999999)
+      {
+        return "Number is too small";
+      }
+
+      bool isNegative = false;
+      if (num == 0)
+      {
+        return "zero";
+      }
+      else if (num < 0)
+      {
+        isNegative = true;
+        num = (long)System.Numerics.BigInteger.Abs(num);
+      }
+
       Dictionary<int, string> numToWord = new Dictionary<int, string>()
       {
         {0,""},
@@ -50,7 +73,7 @@ namespace NumbersToWords.Models
 
       if (num < 20)
       {
-        return numToWord[(int)num];
+        return isNegative ? "negative " + numToWord[(int)num] : numToWord[(int)num];
       }
       else if (num > 19)
       {
@@ -78,7 +101,11 @@ namespace NumbersToWords.Models
 
           if (numC > 999)
           {
-            if (numC > 999999999999)
+            if (numC > 999999999999999)
+            {
+              result += " quadrillion ";
+            }
+            else if (numC > 999999999999)
             {
               result += " trillion ";
             }
@@ -100,39 +127,25 @@ namespace NumbersToWords.Models
           }
         }
       }
-      return result.TrimEnd(' '); ;
+      return isNegative ? "negative " + result.TrimEnd(' ') : result.TrimEnd(' ');
     }
 
     private static string ConvertUpToHundreds(int num, string stringNum, Dictionary<int, string> tenToWord, Dictionary<int, string> numToWord)
     {
-      // string[] numArray = new string[stringNum.Length];
       string result = "";
-      // for (int i = 0; i < stringNum.Length; i++)
-      // {
-      //   numArray[i] = stringNum[i].ToString();
-      // }
       if (num > 99)
       {
-        // result = numToWord[int.Parse(numArray[0])] + " hundred " + tenToWord[int.Parse(numArray[1] + "0")] + " " + numToWord[int.Parse(numArray[2])];
+        // calculate hundred's digit
         int hundreds = num / 100;
         result += numToWord[hundreds] + " hundred ";
+        // subtract hundreds from num
         num = num - (hundreds * 100);
       }
 
-      // if (num > 99)
-      // {
-      //   string tens = "";
-      //   if (stringNum[1] == '1')
-      //   {
-      //     tens = "1";
-      //   }
-      //   result =
-      //     numToWord[int.Parse(numArray[0])] +
-      //     " hundred " +
-      //     numToWord[int.Parse(tens + numArray[2])];
-      // }
       if (num > 19)
       {
+        // calculate ten's digit and multipy by 10 to get the actual ten's digit value
+        // e.g. 23 -> 2 -> 20
         int tens = num / 10 * 10;
         num = num - tens;
         result += tenToWord[tens] + " " + numToWord[num];

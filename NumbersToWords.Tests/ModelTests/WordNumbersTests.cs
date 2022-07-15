@@ -14,6 +14,12 @@ namespace NumbersToWords.Tests
     }
 
     [TestMethod]
+    public void ConvertToWords_ReturnOneForNegative1_NegativeOne()
+    {
+      Assert.AreEqual("-one", WordNumbers.ConvertToWords(-1));
+    }
+
+    [TestMethod]
     public void ConvertToWords_ReturnWordFor2Through19_Word()
     {
       Assert.AreEqual("two", WordNumbers.ConvertToWords(2));
@@ -107,5 +113,12 @@ namespace NumbersToWords.Tests
     {
       Assert.AreEqual("ten trillion eight hundred billion nine hundred million nine thousand one", WordNumbers.ConvertToWords(10800900009001));
     }
+
+    [TestMethod]
+    public void ConvertToWords_ReturnWordForNegative900000000000000000_NegativeNineHundredQuadrillion()
+    {
+      Assert.AreEqual("negative nine hundred quadrillion", WordNumbers.ConvertToWords(-900000000000000000));
+    }
+
   }
 }
