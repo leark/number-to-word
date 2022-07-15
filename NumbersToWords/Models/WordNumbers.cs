@@ -98,7 +98,7 @@ namespace NumbersToWords.Models
           string newStringNum = newNum.ToString();
 
           // newNum cannot exceed 999
-          result += ConvertUpToHundreds((int)newNum, newStringNum, tenToWord, numToWord);
+          result += ConvertUpToHundreds((int)newNum, tenToWord, numToWord);
 
           if (numC > 999)
           {
@@ -131,7 +131,7 @@ namespace NumbersToWords.Models
       return isNegative ? "negative " + result.TrimEnd(' ') : result.TrimEnd(' ');
     }
 
-    private static string ConvertUpToHundreds(int num, string stringNum, Dictionary<int, string> tenToWord, Dictionary<int, string> numToWord)
+    private static string ConvertUpToHundreds(int num, Dictionary<int, string> tenToWord, Dictionary<int, string> numToWord)
     {
       string result = "";
       if (num > 99)
