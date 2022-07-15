@@ -1,4 +1,4 @@
-# Numbers To Words
+# Number To Word
 
 #### By _Seung Lee, PJ Perry_
 
